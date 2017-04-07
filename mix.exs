@@ -30,6 +30,7 @@ defmodule Relay.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [{:cowboy, "~> 1.0.0"},
-     {:plug, "~> 1.0"}]
+     {:plug, "~> 1.0"},
+     {:distillery, "~> 1.0"}]
   end
 end
