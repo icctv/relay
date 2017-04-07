@@ -1,18 +1,22 @@
 defmodule Relay do
-  @moduledoc """
-  Documentation for Relay.
-  """
+  use Application
 
-  @doc """
-  Hello world.
+  @banner """
 
-  ## Examples
-
-      iex> Relay.hello
-      :world
+    (_) / __\\ / __\\/__   \\/\\   /\\
+    | |/ /   / /     / /\\/\\ \\ / /
+    | / /___/ /___  / /    \\ V /
+    |_\\____/\\____/  \\/      \\_/
 
   """
-  def hello do
-    :world
+
+  def start(_type, _args) do
+    IO.puts(@banner)
+
+    children = [
+      Plug.Adapters.Cowboy.child_spec(:http, Relay.Router, [], port: 4000)
+    ]
+
+    Supervisor.start_link(children, strategy: :one_for_one)
   end
 end
