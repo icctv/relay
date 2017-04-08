@@ -4,7 +4,9 @@ elixir:
 otp_release:
   - '19.3'
 
-after_script: MIX_ENV=prod mix release --env=prod
+script:
+  - mix test
+  - MIX_ENV=prod mix release --env=prod
 
 deploy:
   provider: releases
