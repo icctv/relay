@@ -1,0 +1,16 @@
+language: elixir
+elixir:
+  - '1.4.2'
+otp_release:
+  - '19.3'
+
+after_script: MIX_ENV=prod mix release --env=prod
+
+deploy:
+  provider: releases
+  api_key:
+    secure: G/X8A7bn83NPenVNSZO8NFtOO+iYr1f/KycjkF/xaz3Fr0yp3NZFbxjQ4tELf0cxQsArNrV0kzaENckuID1wQWjSg4nFbGmEGKac/cwGQ/xm/eZ8wd+QFI57GQu0pz+SZgnn+0b+VRUHWep09QKtvP2ALmyjzUj1HuSmTux6ys/AW1mqf7GoZdRP2ydHD05QKRjDaWkhjV9bLj9TJW8lvnHCqA4aEjCnSPwu4zVqDdsoGE39lKOaWVEyZnQm4cmN/wkE64pf7PpaExMVBfZITtWWszBIV+Uh25nwIU1SU+6XB3Nk4m7FY72taGqD+H8QQY1V4qBXSxoZyXJqqYNelE5c8SXsKPTv19bY0cIyTi8dkxrjtDsu+cQBIukK5XeN9Q1ofWii4i0KrAnqGCq42f+Mf2QjPWktgGiTkbB3Dsq65kv4R7PGDjC9daEpezaCRTd2qv/uQ/ivoXOkgmYwDI9rjeqBAieIG0jZulBqBgkU6ElCreznSOgzTtFwiy0AgUAsA3REHM0G5hf4b8roIxeCmolfdh/oiMm71gg1IhBpckcob7CIw0pNjmzP6twB1w8n8hAhGYBrECL9pxEl4+6BDNbH4+LTjxI9C4l1hmIJaFAQB6yZMdEnnLa6Yyi+xJS0Apa3bRLdz354BYgrWwTf2wQPh8ZxwFZ7Qs0mbjE=
+  file: _build/prod/rel/relay/releases/${TRAVIS_TAG}/relay.tar.gz
+  on:
+    repo: icctv/relay
+    tags: true
