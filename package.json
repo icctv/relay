@@ -1,0 +1,17 @@
+{
+  "devDependencies": {
+    "@types/express": "^4.0.35",
+    "babel-core": "^6.24.1",
+    "babel-preset-latest": "^6.24.1",
+    "nodemon": "^1.11.0",
+    "ts-node": "^3.0.4",
+    "typescript": "^2.3.4"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3"
+  },
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon --watch 'modules/*.ts' --watch package.json --exec ./node_modules/.bin/ts-node ./modules/index.ts"
+  }
+}
