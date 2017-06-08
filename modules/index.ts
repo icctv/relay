@@ -1,10 +1,16 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
-import * as relay from './relay'
+import makeRelay from './relay'
 
 const PORT = process.env.PORT || 8080
+const HOSTNAME = process.env.HOSTNAME || 'icctv.gq'
+const PROTOCOL = process.env.PROTOCOL || 'http'
+
+const relayBaseUrl = [PROTOCOL, '://', HOSTNAME, ':', PORT].join('')
+const viewerBaseUrl = process.env.VIEWER_BASE_URL || 'http://localhost:3000'
 
 const app = express()
+const relay = makeRelay({ relayBaseUrl, viewerBaseUrl })
 
 const toJSON = obj => JSON.stringify(obj, null, 2) + '\n'
 
@@ -29,5 +35,5 @@ app.post('/in/:uuid', (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Relay started on port ${PORT}`)
+  console.log(`Relay started on ${baseUrl}`)
 })
