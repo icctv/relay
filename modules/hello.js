@@ -15,9 +15,9 @@ export default ({ relayBaseUrl, viewerBaseUrl }) => {
     return {
       in: generateIngestPoints(uuid),
       out: [viewerBaseUrl, '#' + generateViewerId(uuid)].join('/'),
-      unicorn: "🦄"
+      unicorn: '🦄'
     }
   }
 
-  return { hello }
+  return hello
 }
