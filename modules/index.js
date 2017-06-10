@@ -1,9 +1,9 @@
-import express from 'express'
-import bodyParser from 'body-parser'
-import cors from 'cors'
-import expressWs from 'express-ws'
-import hello from './hello'
-import makeRelay from './relay'
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const expressWs = require('express-ws')
+const hello = require('./hello')
+const makeRelay = require('./relay')
 
 const PORT = process.env.PORT || 8080
 const HOSTNAME = process.env.HOSTNAME || 'icctv.gq'

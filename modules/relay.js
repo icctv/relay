@@ -1,4 +1,4 @@
-export default () => {
+module.exports = () => {
   const viewers = {}
 
   const addViewer = (channel, send) => {

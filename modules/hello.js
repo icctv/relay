@@ -1,4 +1,4 @@
-export default ({ relayBaseUrl, viewerBaseUrl }) => {
+module.exports = ({ relayBaseUrl, viewerBaseUrl }) => {
   const generateIngestId = uuid => uuid
   const generateViewerId = uuid => uuid
 
