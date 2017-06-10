@@ -35,7 +35,9 @@ app.ws('/out/:channel', (ws, req) => {
   console.log(`[out] [#${channel}] viewer connected`)
 
   relay.addViewer(channel, (chunk) => {
-    ws.send(chunk)
+    try {
+      ws.send(chunk)
+    } catch (e) {}
   })
 
   ws.on('close', (code, msg) => {

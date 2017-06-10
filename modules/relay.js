@@ -10,7 +10,6 @@ export default () => {
   }
 
   const broadcast = (channel, chunk) => {
-    console.log('broadcasting')
     if (viewers[channel]) {
       viewers[channel].forEach(send => send(chunk))
     }
