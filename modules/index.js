@@ -5,12 +5,13 @@ const expressWs = require('express-ws')
 const hello = require('./hello')
 const makeRelay = require('./relay')
 
-const PORT = process.env.PORT || 8080
-const HOSTNAME = process.env.HOSTNAME || 'icctv.gq'
-const PROTOCOL = process.env.PROTOCOL || 'http'
-
-const relayBaseUrl = [PROTOCOL, '://', HOSTNAME, ':', PORT].join('')
+const PORT = process.env.port || 8080
+const relayBaseUrl = process.env.RELAY_BASE_URL || 'http://localhost:8080'
 const viewerBaseUrl = process.env.VIEWER_BASE_URL || 'http://localhost:3000'
+
+console.log(`Relay starting...`)
+console.log('Relay base url', relayBaseUrl)
+console.log('Viewer base url', viewerBaseUrl)
 
 const relay = makeRelay()
 
@@ -62,6 +63,10 @@ app.post('/in/:uuid', (req, res) => {
   })
 })
 
-app.listen(PORT, () => {
+app.get('/', (req, res) => {
+  res.end('🦄')
+})
+
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Relay started on ${relayBaseUrl}`)
 })

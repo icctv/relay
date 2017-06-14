@@ -1,6 +1,8 @@
 {
   "name": "relay",
   "version": "0.1.0",
+  "private": true,
+  "license": "GPL",
   "devDependencies": {
     "nodemon": "^1.11.0"
   },
