@@ -10,10 +10,10 @@
     "body-parser": "^1.17.2",
     "cors": "^2.8.3",
     "express": "^4.15.3",
-    "express-ws": "^3.0.0",
-    "pm2": "^2.5.0"
+    "express-ws": "^3.0.0"
   },
   "scripts": {
-    "start": "./node_modules/.bin/nodemon --watch 'modules/*.js' --watch package.json ./modules/index.js"
+    "start-dev": "./node_modules/.bin/nodemon --watch 'modules/*.js' --watch package.json ./modules/index.js",
+    "start": "node ./modules/index.js"
   }
 }
