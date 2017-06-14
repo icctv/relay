@@ -5,7 +5,7 @@ const expressWs = require('express-ws')
 const hello = require('./hello')
 const makeRelay = require('./relay')
 
-const PORT = process.env.port || 8080
+const PORT = process.env.PORT || 8080
 const relayBaseUrl = process.env.RELAY_BASE_URL || 'http://localhost:8080'
 const viewerBaseUrl = process.env.VIEWER_BASE_URL || 'http://localhost:3000'
 
