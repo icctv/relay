@@ -2,8 +2,11 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const expressWs = require('express-ws')
-const hello = require('./hello')
+const generate = require('adjective-adjective-animal')
+const Redis = require('ioredis')
+const makeHello = require('./hello')
 const makeRelay = require('./relay')
+const makeSlugs = require('./slugs')
 
 const PORT = process.env.PORT || 8080
 const relayBaseUrl = process.env.RELAY_BASE_URL || 'http://localhost:8080'
@@ -13,7 +16,11 @@ console.log(`Relay starting...`)
 console.log('Relay base url', relayBaseUrl)
 console.log('Viewer base url', viewerBaseUrl)
 
-const relay = makeRelay()
+const redis = new Redis(process.env.REDIS_URL)
+
+const slugs = makeSlugs({ generate, redis })
+const hello = makeHello({ relayBaseUrl, viewerBaseUrl, slugs })
+const relay = makeRelay({ slugs })
 
 const app = express()
 expressWs(app, null, { wsOptions: {
@@ -24,28 +31,29 @@ const toJSON = obj => JSON.stringify(obj, null, 2) + '\n'
 
 app.use(cors({ origin: viewerBaseUrl }))
 
-app.post('/hello/:uuid', bodyParser.json(), (req, res) => {
+app.post('/hello/:uuid', bodyParser.json(), async (req, res) => {
   const uuid = req.params.uuid
-  const response = hello({ relayBaseUrl, viewerBaseUrl })({ uuid })
   console.log(`[hello] [${uuid}] from uuid`)
+  const response = await hello({ uuid })
+  console.log(`[hello] [${uuid}]`, response)
   res.end(toJSON(response))
 })
 
-app.ws('/out/:channel', (ws, req) => {
-  const channel = req.params.channel
-  console.log(`[out] [#${channel}] viewer connected`)
+app.ws('/out/:viewerId', (ws, req) => {
+  const viewerId = req.params.viewerId
+  console.log(`[out] [#${viewerId}] viewer connected`)
 
-  relay.addViewer(channel, (chunk) => {
+  relay.addViewer(viewerId, (chunk) => {
     try {
       ws.send(chunk)
     } catch (e) {}
   })
 
   ws.on('close', (code, msg) => {
-    console.log(`[out] [#${channel}] viewer closed`)
+    console.log(`[out] [#${viewerId}] viewer closed`)
 
     // TODO: Implement
-    //relay.removeViewer(channel, ws)
+    //relay.removeViewer(viewerId, ws)
   })
 })
 
@@ -63,8 +71,14 @@ app.post('/in/:uuid', (req, res) => {
   })
 })
 
-app.get('/', (req, res) => {
-  res.end('🦄')
+app.get('/', async (req, res) => {
+  const slug = await generate({ format: 'title', adjectives: 1 })
+  res.end('🦄 ' + slug)
+})
+
+app.post('/reset', async (req, res) => {
+  await redis.flushall()
+  res.end('ok')
 })
 
 app.listen(PORT, '0.0.0.0', () => {

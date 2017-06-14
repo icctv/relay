@@ -4,36 +4,21 @@ services:
   relay:
     build: .
     environment:
-      - VIRTUAL_HOST=relay.icctv.gq
-      - RELAY_BASE_URL=http://relay.icctv.gq
-      - VIEWER_BASE_URL=http://icctv.gq
+      - REDIS_URL=redis://redis
+      - RELAY_BASE_URL=http://192.168.1.108:8080
+      - VIEWER_BASE_URL=http://localhost:3000
       - PORT=8080
-    expose:
-      - '8080'
+    ports:
+      - '8080:8080'
     networks:
       - backend
     depends_on:
       - redis
-    deploy:
-      restart_policy:
-        condition: on-failure
-
-  nginx:
-    image: 'jwilder/nginx-proxy'
-    environment:
-      - ENABLE_IPV6=true
-    ports:
-      - '80:80'
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
 
   redis:
     image: 'redis:3.2'
     networks:
       - backend
-    deploy:
-      restart_policy:
-        condition: on-failure
 
 networks:
   backend:
