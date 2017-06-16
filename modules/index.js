@@ -1,7 +1,6 @@
 const express = require('express')
 const cors = require('cors')
 const expressWs = require('express-ws')
-const generate = require('adjective-adjective-animal')
 const Redis = require('ioredis')
 const makeHello = require('./hello')
 const makeRelay = require('./relay')
@@ -21,7 +20,7 @@ console.log('Viewer base url', viewerBaseUrl)
 
 const redis = new Redis(process.env.REDIS_URL)
 
-const slugs = makeSlugs({ generate, redis })
+const slugs = makeSlugs({ redis })
 const hello = makeHello({ relayBaseUrl, viewerBaseUrl, slugs })
 const protection = makeProtection({ redis })
 const relay = makeRelay({ slugs, protection })
@@ -42,7 +41,7 @@ setupRoutes({ app, hello, slugs, protection, relay })
 
 // Add a default route to quickly check if the system is reachable
 app.get('/', async (req, res) => {
-  const slug = await generate({ format: 'title', adjectives: 1 })
+  const slug = await slugs.getUnusedViewerId()
   res.end([
     '🦄 ' + slug,
     process.env.HEROKU_SLUG_COMMIT || '', ''

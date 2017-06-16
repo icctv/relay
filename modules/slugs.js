@@ -1,9 +1,12 @@
-const MAX_VIEWER_ID_LENGTH = 22
+const generate = require('adjective-adjective-animal')
 
-module.exports = ({ generate, redis }) => {
+const MAX_VIEWER_ID_LENGTH = 20
+
+module.exports = ({ redis }) => {
   const getUnusedViewerId = async () => {
     let candidate = null
     let isExisting = false
+
     do {
       candidate = await generate(1)
       isExisting = await getUuid(candidate)
@@ -34,5 +37,5 @@ module.exports = ({ generate, redis }) => {
     }
   }
 
-  return { getIngestId, getViewerId, getUuid }
+  return { getIngestId, getViewerId, getUuid, getUnusedViewerId }
 }
