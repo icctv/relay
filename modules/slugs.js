@@ -1,4 +1,17 @@
+const MAX_VIEWER_ID_LENGTH = 22
+
 module.exports = ({ generate, redis }) => {
+  const getUnusedViewerId = async () => {
+    let candidate = null
+    let isExisting = false
+    do {
+      candidate = await generate(1)
+      isExisting = await getUuid(candidate)
+    } while (isExisting || candidate.length > MAX_VIEWER_ID_LENGTH)
+
+    return candidate
+  }
+
   const getIngestId = async uuid => uuid
 
   const getUuid = async viewerId => {
@@ -12,7 +25,7 @@ module.exports = ({ generate, redis }) => {
     if (viewerId) {
       return viewerId
     } else {
-      const newViewerId = await generate(1)
+      const newViewerId = await getUnusedViewerId()
       await redis.set('uuid:' + uuid, newViewerId)
       await redis.set('viewer:' + newViewerId, uuid)
 
