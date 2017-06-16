@@ -10,6 +10,8 @@ services:
       - PORT=8080
     ports:
       - '8080:8080'
+    volumes:
+      - '.:/root/relay/'
     networks:
       - backend
     depends_on:
@@ -17,6 +19,16 @@ services:
 
   redis:
     image: 'redis:3.2'
+    networks:
+      - backend
+
+  redis-commander:
+    image: 'ficusio/redis-commander'
+    command: '--redis-host redis'
+    depends_on:
+      - redis
+    ports:
+      - '8081:8081'
     networks:
       - backend
 

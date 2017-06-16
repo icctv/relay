@@ -12,4 +12,4 @@ RUN yarn
 # Now copy the other source files
 COPY . .
 
-CMD ["/root/relay/node_modules/.bin/pm2-docker", "/root/relay/modules/index.js"]
+CMD ["/root/relay/node_modules/.bin/nodemon", "--watch", "modules/*.js", "--watch", "/root/relay/package.json", "/root/relay/modules/index.js"]
