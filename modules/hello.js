@@ -22,5 +22,12 @@ module.exports = ({ relayBaseUrl, viewerBaseUrl, slugs }) => {
     }
   }
 
-  return hello
+  const handleRequest = async (req, res) => {
+    const { uuid } = req.params
+    console.log(`[hello] [${uuid}] from uuid`)
+    const response = await hello({ uuid })
+    res.end(JSON.stringify(response))
+  }
+
+  return { handleRequest }
 }
