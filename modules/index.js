@@ -43,7 +43,10 @@ setupRoutes({ app, hello, slugs, protection, relay })
 // Add a default route to quickly check if the system is reachable
 app.get('/', async (req, res) => {
   const slug = await generate({ format: 'title', adjectives: 1 })
-  res.end('🦄 ' + slug)
+  res.end([
+    '🦄 ' + slug,
+    process.env.HEROKU_SLUG_COMMIT || '', ''
+  ].join('\n'))
 })
 
 // Finally, start the server and listen on all interfaces (0.0.0.0)
