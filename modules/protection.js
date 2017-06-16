@@ -1,4 +1,6 @@
-const KEY = 'protection:'
+const PREFIX = 'protection:'
+
+const key = k => PREFIX + k
 
 module.exports = ({ redis }) => {
   const protect = ({ uuid, password }) => {
@@ -6,25 +8,25 @@ module.exports = ({ redis }) => {
       return unprotect({ uuid })
     }
 
-    return redis.set(KEY + uuid, password)
+    return redis.set(key(uuid), password)
   }
 
   const unprotect = ({ uuid }) => {
-    return redis.delete(KEY + uuid)
+    return redis.del(key(uuid))
   }
 
   const isProtected = async ({ uuid }) => {
-    const password = await redis.get(KEY + uuid)
+    const password = await redis.get(key(uuid))
     return !!password
   }
 
   const checkPassword = async ({ uuid, password }) => {
-    const savedPassword = await redis.get(KEY + uuid)
+    const savedPassword = await redis.get(key(uuid))
     return savedPassword === password
   }
 
   const handleProtect = async (req, res) => {
-    const uuid = req.params.uuid
+    const { uuid } = req.params
     const password = req.body.password
     console.log('[protect] uuid', uuid, 'password', req.body.password)
     await protect({ uuid, password })
@@ -32,7 +34,7 @@ module.exports = ({ redis }) => {
   }
 
   const handleUnprotect = async (req, res) => {
-    const uuid = req.params.uuid
+    const { uuid } = req.params
     console.log('[protect] uuid', uuid, 'removed password protection')
     await unprotect({ uuid })
     res.end()
