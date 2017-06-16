@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "license": "GPL",
+  "engines": {
+    "node": "8.1.2"
+  },
   "devDependencies": {
     "nodemon": "^1.11.0"
   },
