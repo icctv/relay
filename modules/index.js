@@ -7,6 +7,7 @@ const Redis = require('ioredis')
 const makeHello = require('./hello')
 const makeRelay = require('./relay')
 const makeSlugs = require('./slugs')
+const makeProtection = require('./protection')
 
 const PORT = process.env.PORT || 8080
 const relayBaseUrl = process.env.RELAY_BASE_URL || 'http://localhost:8080'
@@ -20,7 +21,8 @@ const redis = new Redis(process.env.REDIS_URL)
 
 const slugs = makeSlugs({ generate, redis })
 const hello = makeHello({ relayBaseUrl, viewerBaseUrl, slugs })
-const relay = makeRelay({ slugs })
+const protection = makeProtection({ redis })
+const relay = makeRelay()
 
 const app = express()
 expressWs(app, null, { wsOptions: {
@@ -39,15 +41,23 @@ app.post('/hello/:uuid', bodyParser.json(), async (req, res) => {
   res.end(toJSON(response))
 })
 
-app.ws('/out/:viewerId', (ws, req) => {
+app.ws('/out/:viewerId', async (ws, req) => {
   const viewerId = req.params.viewerId
   console.log(`[out] [#${viewerId}] viewer connected`)
 
-  relay.addViewer(viewerId, (chunk) => {
-    try {
-      ws.send(chunk)
-    } catch (e) {}
-  })
+  const uuid = await slugs.getUuid(viewerId)
+  if (uuid) {
+    console.log(`[relay] add viewer of ${viewerId} to stream ${uuid}`)
+    if (await protection.isProtected({ uuid })) {
+      // TODO: Check password?
+    }
+
+    relay.addViewer(uuid, chunk =>
+      ws.send(chunk, () => {})
+    )
+  } else {
+    console.error(`[relay] viewer of ${viewerId} attempted to stream non-existing uuid`)
+  }
 
   ws.on('close', (code, msg) => {
     console.log(`[out] [#${viewerId}] viewer closed`)
@@ -69,6 +79,24 @@ app.post('/in/:uuid', (req, res) => {
   req.on('end', () => {
     res.end()
   })
+})
+
+app.post('/protect/:uuid', bodyParser.json(), (req, res) => {
+  const uuid = req.params.uuid
+  const password = req.body.password
+
+  console.log('[protect] uuid', uuid, 'password', req.body.password)
+
+  protection.protect({ uuid, password })
+
+  res.end()
+})
+
+app.delete('/protect/:uuid', bodyParser.json(), (req, res) => {
+  const uuid = req.params.uuid
+
+  protection.unprotect({ uuid })
+  res.end()
 })
 
 app.get('/', async (req, res) => {

@@ -1,19 +1,11 @@
-module.exports = ({ slugs }) => {
+module.exports = () => {
   const viewers = {}
 
-  const addViewer = async (channel, send) => {
-    const uuid = await slugs.getUuid(channel)
-
-    console.log(`[relay] add viewer of channel ${channel} to stream ${uuid}`)
-
-    if (uuid) {
-      if (!viewers[uuid]) {
-        viewers[uuid] = [send]
-      } else {
-        viewers[uuid].push(send)
-      }
+  const addViewer = async (uuid, send) => {
+    if (!viewers[uuid]) {
+      viewers[uuid] = [send]
     } else {
-      // TODO: Handle case when viewers join non-existing channel
+      viewers[uuid].push(send)
     }
   }
 
