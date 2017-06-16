@@ -1,0 +1,14 @@
+language: node_js
+
+node_js:
+  - '8.1.2'
+
+script: true
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: Mmx5MzApov8yTk22grHdZdd4rjg7+FAM51zcQjIMyJPpDfOCmLHLb0GDgU0dSoVk+gHAu2u1Vo3N5XzynCbP8heN5ZQXmCt25LowfraSVpoiOQwNlcvaXfgNxq8fLi5oJHoydXEv4U3hJT4B7GKS4y285euFMrsENqJxP9P7bl/FAh7OCfqXFVdOvIkHn57AsE1qOuZLVIcgwR3sxCBRTSyo5Vs9QI7eScIh8KDX4wNU6LJL5bNWyFYevjeaPV7sTtgKqeCpiPyiN2psvo+iRZQiAtFwd0xqNlwg82VuPlACcefLd6EIMpkf7csmJpBAND2whh6Hu9KfngwPQHLQbrypfUukdl9/frqDzSfQhm4X1Vi6ndBY0rTFVEmvpbwIKOzMEOMte10QCpXhTZCa/UlZE62b4M3d0UfzM1xdvoJBCxhtqli6/A/lPF7MsROJaIAtUbbk3euvVqvVf90pZZR1YQJSWso7i7wMjYyvP4/Cnja6Cvm5VKnix/7ywCZOgHEnikNRyuF8tPz3DgVquqMGcTeu1tJH3a/Z/Hww54uXco97O/HQqtB5bgPR7+eGNOedoYEE4TVAClJlRdCKBXIIN1AsJGOyORg/nkIaw5o1PmCj1qSXDffPWP1vcEZ/LKpIAPFuU96vgbrtV/7Aiybm5KORALH0n7R+TiNIDcM=
+  app: icctv
+  on:
+    repo: icctv/relay
