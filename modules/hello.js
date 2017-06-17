@@ -24,8 +24,9 @@ module.exports = ({ relayBaseUrl, viewerBaseUrl, slugs }) => {
 
   const handleRequest = async (req, res) => {
     const { uuid } = req.params
-    console.log(`[hello] [${uuid}] from uuid`)
     const response = await hello({ uuid })
+    const viewerId = await slugs.getViewerId(uuid)
+    console.log(`[hello] from uuid ${uuid} streaming to channel ${viewerId}`)
     res.end(JSON.stringify(response))
   }
 
