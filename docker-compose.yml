@@ -11,7 +11,9 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - '.:/root/relay/'
+      - './modules:/root/relay/modules'
+      - './package.json:/root/relay/package.json'
+      - './yarn.lock:/root/relay/yarn.lock'
     networks:
       - backend
     depends_on:

@@ -6,6 +6,7 @@
   "engines": {
     "node": "8.1.2"
   },
+  "main": "modules/index.js",
   "devDependencies": {
     "nodemon": "^1.11.0"
   },
@@ -19,7 +20,7 @@
     "pm2": "^2.5.0"
   },
   "scripts": {
-    "start-dev": "./node_modules/.bin/nodemon --watch 'modules/*.js' --watch package.json ./modules/index.js",
+    "start-dev": "./node_modules/.bin/nodemon",
     "start": "node ./modules/index.js"
   }
 }
