@@ -35,15 +35,22 @@ expressWs(app, null, { wsOptions: {
 
 // Allow the viewer to connect from a different origin
 var whitelist = [viewerBaseUrl, 'http://localhost:3000']
-const checkOrigin = (origin, cb) =>
-  whitelist.includes(origin)
-  ? cb(null, true)
-  : cb(new Error(403))
+const checkOrigin = (origin, cb) => {
+  if (!origin) {
+    cb(null, true)
+  }
 
-app.use(cors({ origin: checkOrigin }))
+  if (whitelist.includes(origin)) {
+    cb(null, true)
+  } else {
+    cb(new Error('Origin not allowed'))
+  }
+}
+
+const allowCors = cors({ origin: checkOrigin })
 
 // See routes.js
-setupRoutes({ app, hello, slugs, protection, relay })
+setupRoutes({ app, hello, slugs, protection, relay, allowCors })
 
 // Add a default route to quickly check if the system is reachable
 app.get('/', async (req, res) => {
