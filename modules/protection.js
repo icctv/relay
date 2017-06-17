@@ -42,14 +42,15 @@ module.exports = ({ redis, slugs }) => {
 
   const handleAuthorize = async (req, res) => {
     const { viewerId, password } = req.params
-    const uuid = await slugs.getUuid({ viewerId })
+    const uuid = await slugs.getUuid(viewerId)
     const is = await checkPassword({ uuid, password })
-    res.end(JSON.stringify({ isValid: is }))
+    if (!is) console.log('[protect] failed authorization', { viewerId, uuid })
+    res.end(JSON.stringify({ isAuthorized: is }))
   }
 
   const handleIsProtected = async (req, res) => {
     const { viewerId } = req.params
-    const uuid = await slugs.getUuid({ viewerId })
+    const uuid = await slugs.getUuid(viewerId)
     const is = await isProtected({ uuid })
     res.end(JSON.stringify({ isProtected: is }))
   }
