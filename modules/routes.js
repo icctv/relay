@@ -14,6 +14,6 @@ module.exports = ({ app, hello, slugs, protection, relay, allowCors }) => {
 
   // Don't parse the body here because we're dealing with binary data
   app.post('/in/:uuid', relay.handleIngest)
-  app.ws('/out/:viewerId', allowCors, relay.handleViewer)
-  app.ws('/out/:viewerId/:password', allowCors, relay.handleViewer)
+  app.ws('/out/:viewerId', relay.handleViewer)
+  app.ws('/out/:viewerId/:password', relay.handleViewer)
 }
