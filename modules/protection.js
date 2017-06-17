@@ -2,7 +2,7 @@ const PREFIX = 'protection:'
 
 const key = k => PREFIX + k
 
-module.exports = ({ redis }) => {
+module.exports = ({ redis, slugs }) => {
   const protect = ({ uuid, password }) => {
     if (!password) {
       return unprotect({ uuid })
@@ -40,5 +40,28 @@ module.exports = ({ redis }) => {
     res.end()
   }
 
-  return { protect, unprotect, isProtected, checkPassword, handleProtect, handleUnprotect }
+  const handleAuthorize = async (req, res) => {
+    const { viewerId, password } = req.params
+    const uuid = await slugs.getUuid({ viewerId })
+    const is = await checkPassword({ uuid, password })
+    res.end(JSON.stringify({ isValid: is }))
+  }
+
+  const handleIsProtected = async (req, res) => {
+    const { viewerId } = req.params
+    const uuid = await slugs.getUuid({ viewerId })
+    const is = await isProtected({ uuid })
+    res.end(JSON.stringify({ isProtected: is }))
+  }
+
+  return {
+    protect,
+    unprotect,
+    isProtected,
+    checkPassword,
+    handleProtect,
+    handleUnprotect,
+    handleAuthorize,
+    handleIsProtected
+  }
 }

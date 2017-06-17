@@ -22,7 +22,7 @@ const redis = new Redis(process.env.REDIS_URL)
 
 const slugs = makeSlugs({ redis })
 const hello = makeHello({ relayBaseUrl, viewerBaseUrl, slugs })
-const protection = makeProtection({ redis })
+const protection = makeProtection({ slugs, redis })
 const relay = makeRelay({ slugs, protection })
 
 const app = express()
@@ -34,7 +34,13 @@ expressWs(app, null, { wsOptions: {
 }})
 
 // Allow the viewer to connect from a different origin
-app.use(cors({ origin: viewerBaseUrl }))
+var whitelist = [viewerBaseUrl, 'http://localhost:3000']
+const checkOrigin = (origin, cb) =>
+  whitelist.includes(origin)
+  ? cb(null, true)
+  : cb(new Error(403))
+
+app.use(cors({ origin: checkOrigin }))
 
 // See routes.js
 setupRoutes({ app, hello, slugs, protection, relay })
