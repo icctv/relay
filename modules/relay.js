@@ -1,17 +1,25 @@
 module.exports = ({ slugs, protection }) => {
   const viewers = {}
 
-  const addViewer = async (uuid, send) => {
+  const addViewer = (uuid, clientId, send) => {
     if (!viewers[uuid]) {
-      viewers[uuid] = [send]
-    } else {
-      viewers[uuid].push(send)
+      viewers[uuid] = {}
+    }
+
+    viewers[uuid][clientId] = { send }
+  }
+
+  const removeViewer = (uuid, clientId) => {
+    if (viewers[uuid] && viewers[uuid][clientId]) {
+      delete viewers[uuid][clientId]
     }
   }
 
   const broadcast = (uuid, chunk) => {
     if (viewers[uuid]) {
-      viewers[uuid].forEach(send => send(chunk))
+      Object.keys(viewers[uuid]).forEach(clientId => {
+        viewers[uuid][clientId].send(chunk)
+      })
     }
   }
 
@@ -23,7 +31,7 @@ module.exports = ({ slugs, protection }) => {
     return { receive }
   }
 
-  const handleIngest = async (req, res) => {
+  const handleIngest = (req, res) => {
     const { uuid } = req.params
     const ingest = ingestPoint(uuid)
 
@@ -42,6 +50,7 @@ module.exports = ({ slugs, protection }) => {
     console.log(`[out] [#${viewerId}] viewer connected`)
 
     const uuid = await slugs.getUuid(viewerId)
+    const clientId = Math.random().toString(16)
 
     if (uuid) {
       console.log(`[out] add viewer of ${viewerId} to stream ${uuid}`)
@@ -53,7 +62,7 @@ module.exports = ({ slugs, protection }) => {
         }
       }
 
-      addViewer(uuid, chunk =>
+      addViewer(uuid, clientId, chunk =>
         ws.send(chunk, () => {})
       )
     } else {
@@ -62,10 +71,15 @@ module.exports = ({ slugs, protection }) => {
 
     ws.on('close', (code, msg) => {
       console.log(`[out] [#${viewerId}] viewer closed`)
-      // TODO: Implement
-      // removeViewer(viewerId, ws)
+      removeViewer(uuid, clientId)
     })
   }
 
-  return { ingestPoint, addViewer, handleIngest, handleViewer }
+  return {
+    ingestPoint,
+    addViewer,
+    removeViewer,
+    handleIngest,
+    handleViewer
+  }
 }
